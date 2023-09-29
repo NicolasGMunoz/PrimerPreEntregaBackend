@@ -22,43 +22,21 @@ class ProductManager {
     }
 
     //method of create product and push to JSON
-    addPorduct = async (title, description, code, price, status, stock, category, thumbnail) => {
+    addPorduct = async (product) => {
         try {
-            if (!title || !description || !code || !price || !status || !stock || !category) {
-                return "Error al cargar el producto. Faltan datos por cargar";
-            }
-
-            const product = {
-                title,
-                description,
-                code,
-                price,
-                status,
-                stock,
-                category,
-                thumbnail
-
-            }
             const products = await this.getProducts();
 
-            //condition of existing code
-            const indexCode = products.some(product => product.code === code)
-
-            if (indexCode) {
-                console.log(`El codigo de prodcuto "${product.code}" ya se encuentra registrado`)
-            } else {
-                //condition of id generator
-                if (products.length === 0) {
-                    product.id = 1;
-                } else {
-                    product.id = products[products.length - 1].id + 1;
-                }
-                products.push(product);
-
-                await fs.promises.writeFile(this.path, JSON.stringify(products, null, '\t'));
-
-                return product;
+            if (products.some(p => p.code === product.code)) {
+                return `El codigo de prodcuto "${product.code}" ya se encuentra registrado`;
             }
+
+            if (!product.title || !product.description || !product.price || !product.status || !product.code || !product.stock || !product.category) {
+                return "Error al cargar el producto. Faltan datos por cargar"
+            }
+            product.id = products.length === 0 ? 1 : products[products.length - 1].id + 1;
+            products.push(product);
+            await fs.promises.writeFile(this.path, JSON.stringify(products, null, '\t'));
+            return product;
 
         } catch (error) {
             console.log(error);
@@ -86,17 +64,35 @@ class ProductManager {
     }
 
     //method of update product in JSON
-    updateProduct = async (idProduct, title) => {
+    updateProduct = async (idProduct, product) => {
         try {
             const products = await this.getProducts();
-            const indexProduct = products.findIndex(product => product.id === idProduct);
+            const indexProduct = products.findIndex(p => p.id === id);
 
-            if (indexProduct === -1) {
-                return `El ID ${idProduct} no se encuentra registrado`;
+            if (indexProduct != -1) {
+                if (products.some(p => p.code === product.code)) {
+                    console.log(`El codigo de prodcuto "${product.code}" ya se encuentra registrado`)
+                }
+                else {
+                    products[indexProduct] = {
+                        title: product.title || products[indexProduct].title,
+                        description: product.description || products[indexProduct].description,
+                        price: product.price || products[indexProduct].price,
+                        thumbnail: product.thumbnail || products[indexProduct].thumbnail,
+                        code: product.code || products[indexProduct].code,
+                        stock: product.stock || products[indexProduct].stock,
+                        status: product.status || products[indexProduct].status,
+                        category: product.category || products[indexProduct].category,
+                        id: id
+                    };
+
+                    await fs.promises.writeFile(this.path, JSON.stringify(products, null, '\t'));
+                }
+
             } else {
-                Object.assign(products[indexProduct], { title: title });
-                await fs.promises.writeFile(this.path, JSON.stringify(products, null, '\t'));
+                return `El ID ${idProduct} no se encuentra registrado`;
             }
+
         } catch (error) {
             console.log(error);
         }
@@ -109,11 +105,11 @@ class ProductManager {
             const indexProduct = products.findIndex(product => product.id === idProduct);
 
             if (indexProduct === -1) {
-                return console.log(`El ID ${idProduct} no se encuentra registrado`);
+                return `El ID ${idProduct} no se encuentra registrado`;
             } else {
                 products.splice(indexProduct, 1)
                 await fs.promises.writeFile(this.path, JSON.stringify(products, null, '\t'));
-                return console.log(`El producto con ID ${idProduct} se elimino`);
+                return `El producto con ID ${idProduct} se elimino`;
             }
         } catch (error) {
             console.log(error);

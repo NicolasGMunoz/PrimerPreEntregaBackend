@@ -22,7 +22,7 @@ router.get('/:cid', async (res, req) => {
 });
 
 //Endpoint que agrega un producto al carrito
-router.post('/:cid/product/:pid', async (req, res) => {
+router.put('/:cid/product/:pid', async (req, res) => {
     const cart = Number(req.params.cid);
     const product = Number(req.params.pid);
     await cartManager.updateCart(cart, product);

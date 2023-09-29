@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
 })
 
 //Endpoint que muestra el producto segun el id
-app.get('/products/:cid', async (req, res) =>{
+router.get('/:cid', async (req, res) =>{
     const product = await productManager.getProductById(Number(req.params.cid));
     res.send(product)
 })
@@ -30,7 +30,7 @@ app.get('/products/:cid', async (req, res) =>{
 //Endpoint que crea un producto 
 router.post('/', async (req, res) => {
     const product = req.body;
-    await productManager.addProduct(product);
+    await productManager.addPorduct(product);
     res.send({ status: 'Success', payload: product });
 });
 
