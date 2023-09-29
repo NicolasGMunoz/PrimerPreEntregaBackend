@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router } from "express"
 import CartManager from "../manger/CartManager.js"
 import { __dirname } from "../util.js";
 import path from "node:path";
@@ -16,18 +16,27 @@ router.post('/', async (req, res) =>{
 
 //Endpoint que muestra un carrito
 router.get('/:cid', async (res, req) => {
-    const cart = Number(req.params.cid);
+    const cart = Number(req.params.cid)
     const products = await cartManager.getCartById(cart).products;
-    res.send({status: 'succes', payload: products});
+    if(products){
+        res.send({status: 'succes', payload: products});
+    }else{
+        res.status(404).send({message: 'carrito no encontrado'})
+    }
+    
 });
 
 //Endpoint que agrega un producto al carrito
-router.put('/:cid/product/:pid', async (req, res) => {
+router.post('/:cid/product/:pid', async (req, res) => {
     const cart = Number(req.params.cid);
     const product = Number(req.params.pid);
-    await cartManager.updateCart(cart, product);
+    const updateResault = await cartManager.updateCart(cart, product);
+    if(updateResault){
+        res.send({ status: 'success', message: 'Producto Agregado'});
+    }else{
+        res.status(404).send({message: 'carrito no encontrado'})
+    }
 
-    res.send({ status: 'success', payload: 'Producto Agregado'});
 });
 
 

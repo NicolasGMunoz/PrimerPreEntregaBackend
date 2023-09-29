@@ -50,7 +50,7 @@ class CartManager {
             const indexCart = carts.find(cart => cart.id === idCart);
 
             if (!indexCart) {
-                return `El ID ${idCart} no se encuentra registrado`;
+                return false;
             }
             return indexCart;
         } catch (error) {
@@ -64,18 +64,19 @@ class CartManager {
             const carts = await this.getCart();
             const cartIndex = carts.findIndex(cart => cart.id === idCart);
 
-            if (cartIndex !== -1) {
+            if (cartIndex != -1) {
                 const productIndex = carts[cartIndex].products.findIndex(product => product.id === idProduct);
 
-                if (productIndex !== -1) {
+                if (productIndex != -1) {
                     carts[cartIndex].products[productIndex].quantity++;
                 } else {
                     carts[cartIndex].products.push({ id: idProduct, quantity: 1 });
                 }
 
                 await fs.promises.writeFile(this.path, JSON.stringify(carts, null, '\t'));
+                return true;
             } else {
-                return `El ID ${idCart} no se encuentra registrado`;
+                return false;
             }
 
         } catch (error) {
