@@ -47,7 +47,7 @@ class CartManager {
     getCartById = async (idCart) => {
         try {
             const carts = await this.getCart();
-            const indexCart = carts.find(cart => cart.id === idCart);
+            const indexCart = carts.find(cart => cart.id === Number(idCart));
 
             if (!indexCart) {
                 return false;

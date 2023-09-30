@@ -108,5 +108,16 @@
 		"category": "GPU",
 		"thumbnail": "./rx5050.png",
 		"id": 10
+	},
+	{
+		"stock": 23,
+		"id": 11,
+		"title": "Procesador solo",
+		"description": "Microprocesador Intel",
+		"code": "pro100",
+		"price": 70,
+		"status": true,
+		"category": "cpu",
+		"thumbnail": ""
 	}
 ]

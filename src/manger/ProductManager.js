@@ -67,30 +67,25 @@ class ProductManager {
     updateProduct = async (idProduct, product) => {
         try {
             const products = await this.getProducts();
-            const indexProduct = products.findIndex(p => p.id === id);
+            const indexProduct = products.findIndex(p => p.id === idProduct);
 
             if (indexProduct != -1) {
                 if (products.some(p => p.code === product.code)) {
                     console.log(`El codigo de prodcuto "${product.code}" ya se encuentra registrado`)
                 }
                 else {
-                    products[indexProduct] = {
-                        title: product.title || products[indexProduct].title,
-                        description: product.description || products[indexProduct].description,
-                        price: product.price || products[indexProduct].price,
-                        thumbnail: product.thumbnail || products[indexProduct].thumbnail,
-                        code: product.code || products[indexProduct].code,
-                        stock: product.stock || products[indexProduct].stock,
-                        status: product.status || products[indexProduct].status,
-                        category: product.category || products[indexProduct].category,
-                        id: id
-                    };
-
+                    Object.assign(products[indexProduct], { title: product.title })
+                    Object.assign(products[indexProduct], { description: product.description })
+                    Object.assign(products[indexProduct], { code: product.code })
+                    Object.assign(products[indexProduct], { price: product.price })
+                    Object.assign(products[indexProduct], { status: product.status })
+                    Object.assign(products[indexProduct], { category: product.category })
+                    Object.assign(products[indexProduct], { thumbnail: product.thumbnail })
                     await fs.promises.writeFile(this.path, JSON.stringify(products, null, '\t'));
+                    return true;
                 }
-
             } else {
-                return `El ID ${idProduct} no se encuentra registrado`;
+                return false;
             }
 
         } catch (error) {

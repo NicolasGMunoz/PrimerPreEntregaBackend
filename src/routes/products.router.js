@@ -13,17 +13,17 @@ router.get('/', async (req, res) => {
     const products = await productManager.getProducts();
     const limit = Number(req.query.limit);
 
-    if(limit){
+    if (limit) {
         let productsLimit = products.slice(0, limit)
         return res.send(productsLimit)
-    }else{
+    } else {
         res.send(products)
     }
 })
 
 //Endpoint que muestra el producto segun el id
-router.get('/:cid', async (req, res) =>{
-    const product = await productManager.getProductById(Number(req.params.cid));
+router.get('/:pid', async (req, res) => {
+    const product = await productManager.getProductById(Number(req.params.pid));
     res.send(product)
 })
 
@@ -35,6 +35,18 @@ router.post('/', async (req, res) => {
 });
 
 //Endpoint que actualiza un producto
+router.put('/:pid', async (req, res) => {
+    const id = Number(req.params.pid);
+    const product = req.body;
+    const tof = await productManager.updateProduct(id, product);
+    const productUpdate = await productManager.getProductById(id);
+    if(tof){
+        res.send({ status: 'succes', payload: productUpdate });
+    }else{
+        res.status(404).send({ message: 'Producto no encontrado / El codigo de producto ya existe' })
+    }
+    
+});
 
 
 //Endpoint que elimina un producto
@@ -42,7 +54,7 @@ router.delete('/:pid', async (req, res) => {
     const id = Number(req.params.pid);
     await productManager.deleteProduct(id);
 
-    res.send({ status: 'Success', payload: `Product N° ${id} deleted`});
+    res.send({ status: 'Success', payload: `Product N° ${id} deleted` });
 });
 
 export default router;
